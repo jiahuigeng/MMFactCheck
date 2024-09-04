@@ -184,4 +184,4 @@ if __name__ == "__main__":
     #     #     print(row["image_id"])
 
     # convert_file("fauxtography")
-    convert_file("mr2")
+    # convert_file("mr2")

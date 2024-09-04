@@ -37,7 +37,7 @@ def main(args):
     elif args.model_size == "large":
         model_id = 'OpenGVLab/InternVL2-8B'
 
-    pipe = pipeline(model, backend_config=TurbomindEngineConfig(session_len=8192))
+    pipe = pipeline(model_id, backend_config=TurbomindEngineConfig(session_len=8192))
 
     for mode in parse_comma_separated_list(args.mode):
         pmp_template = VERACITY_PROMPTS[mode]
@@ -52,6 +52,7 @@ def main(args):
 
             for samp_idx in range(args.repeat):
                 response = pipe((total_prompt, load_image(image_id)))
+                print(response)
                 col_name = '_'.join([args.dataset, args.model, args.model_size, mode, samp_idx])
                 dataset.at[idx, col_name] = response
                 dataset.to_csv(res_file, index=False)

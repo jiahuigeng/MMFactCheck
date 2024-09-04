@@ -38,11 +38,12 @@ def main(args):
             total_prompt = pmp_template.format(claim)
             print(total_prompt, f"label: {label}")
 
-            # for samp_idx in range(args.repeat):
-            #     response = prompt_llava16(model, processor, load_image_llava(image_id), total_prompt)
-            #     col_name = '_'.join([args.dataset, args.model, args.model_size, mode, samp_idx])
-            #     dataset.at[idx, col_name] = response
-            #     dataset.to_csv(res_file, index=False)
+            for samp_idx in range(args.repeat):
+                response = prompt_llava16(model, processor, load_image_llava(image_id), total_prompt)
+                print(response)
+                col_name = '_'.join([args.dataset, args.model, args.model_size, mode, samp_idx])
+                dataset.at[idx, col_name] = response
+                dataset.to_csv(res_file, index=False)
 
 if __name__ == '__main__':
 
