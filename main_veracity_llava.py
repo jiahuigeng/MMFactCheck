@@ -15,7 +15,7 @@ def main(args):
         os.makedirs("results")
 
     ori_file = os.path.join("dataset", args.dataset, args.dataset+".csv")
-    res_file = os.path.join("results", '_'.join([args.dataset, args.model, args.model_size]) + '.csv')
+    res_file = os.path.join("results", '_'.join([args.dataset, args.model, args.model_size, args.mode]) + '.csv')
 
     if not os.path.exists(res_file):
         copyfile(ori_file, res_file)
@@ -41,7 +41,7 @@ def main(args):
             for samp_idx in range(args.repeat):
                 col_name = '_'.join([args.dataset, args.model, args.model_size, mode, str(samp_idx)])
                 if pd.isna(dataset.iloc[idx][col_name]):
-                    response = prompt_llava16(model, processor, load_image_llava(image_id), total_prompt)
+                    response = prompt_llava16(model, processor, image_id, total_prompt)
                     print(response)
                     dataset.at[idx, col_name] = response
                     dataset.to_csv(res_file, index=False)

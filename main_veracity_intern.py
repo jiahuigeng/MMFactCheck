@@ -18,7 +18,7 @@ def main(args):
         os.makedirs("results")
 
     ori_file = os.path.join("dataset", args.dataset, args.dataset+".csv")
-    res_file = os.path.join("results", '_'.join([args.dataset, args.model, args.model_size]) + '.csv')
+    res_file = os.path.join("results", '_'.join([args.dataset, args.model, args.model_size, args.mode]) + '.csv')
 
     if not os.path.exists(res_file):
         copyfile(ori_file, res_file)
