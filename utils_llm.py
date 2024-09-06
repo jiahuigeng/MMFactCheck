@@ -3,10 +3,11 @@ from transformers import AutoModel, AutoTokenizer
 
 import torch
 import torchvision.transforms as T
-
+from openai import OpenAI
 from PIL import Image
 from io import BytesIO
 import requests
+import base64
 from torchvision.transforms.functional import InterpolationMode
 
 # def encode_image(image_id):
@@ -93,6 +94,7 @@ def load_image_intern(image_file, input_size=448, max_num=12):
     pixel_values = [transform(image) for image in images]
     pixel_values = torch.stack(pixel_values)
     return pixel_values
+
 def get_llava16_model(model_size):
     if model_size == "small":
         model_id = 'llava-hf/llava-v1.6-mistral-7b-hf'
@@ -108,6 +110,39 @@ def get_llava16_model(model_size):
                                                               low_cpu_mem_usage=True, load_in_4bit=True)
     # model.to("cuda:0")
     return model, processor
+
+def get_gpt_model():
+    openai_key_file = "openai_api.txt"
+    openai_key = open(openai_key_file, "r").read()
+    model = OpenAI(api_key=openai_key)
+    return model
+
+def prompt_gpt4(model, prompt, image_id):
+    with open(image_id, "rb") as image_file:
+        base64_image = f"data:image/png;base64,{base64.b64encode(image_file.read()).decode('utf-8')}"
+    response = model.chat.completions.create(
+        model="gpt-4-vision-preview",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"{base64_image}"
+                            # "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+                        },
+                    },
+                ],
+            }
+        ],
+        max_tokens=300,
+    )
+    res = response.choices[0].message.content
+    return res
+
+
 
 def get_model_and_processor(args):
     if args.model == "llava":
@@ -151,6 +186,7 @@ def get_model_and_processor(args):
         model = None
         return model, None
 
+
 # def prompt_llava16(model, processor, image, human_input):
 #     conversation = [
 #         {
@@ -166,6 +202,8 @@ def get_model_and_processor(args):
 #     output = model.generate(**inputs, max_new_tokens=500)
 #     output = processor.decode(output[0], skip_special_tokens=True).split("[/INST]")[0]
 #     return output
+
+
 
 def prompt_llava16(model, processor, image_id, human_input):
 
@@ -186,14 +224,20 @@ def prompt_llava16(model, processor, image_id, human_input):
     return output
 
 
+
 def ensemble_prompt():
     pass
 
 
 
 if __name__ == "__main__":
-    model, processor = get_llava16_model("small")
+    # model, processor = get_llava16_model("small")
     url = "https://github.com/haotian-liu/LLaVA/blob/1a91fc274d7c35a9b50b3cb29c4247ae5837ce39/images/llava_v1_5_radar.jpg?raw=true"
-    image = load_image(url)
-    query = "What is shown in this image?"
-    print(prompt_llava16(model, processor, image, query))
+    # image = load_image_llava(url)
+    # image = url
+    # query = "What is shown in this image?"
+    # print(prompt_llava16(model, processor, image, query))
+
+    model = get_gpt_model()
+    res = prompt_gpt4(model, "describe this image", "view.jpg")
+    print(res)

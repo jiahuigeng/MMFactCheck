@@ -1,7 +1,4 @@
 from shutil import copyfile
-
-import pandas as pd
-
 from utils import *
 from utils_llm import *
 from prompts import *
@@ -24,55 +21,42 @@ def main(args):
         copyfile(ori_file, res_file)
 
     dataset = pd.read_csv(res_file)
+    # for mode in parse_comma_separated_list(args.mode):
+    #     for i in range(args.repeat):
+    #         col_name = '_'.join([args.dataset, args.model, args.model_size, mode, str(i)])
+    #         if col_name not in dataset.columns:
+    #             dataset[col_name] = None
 
-    for mode in parse_comma_separated_list(args.mode):
-        for i in range(args.repeat):
-            col_name = '_'.join([args.dataset, args.model, args.model_size, mode, str(i)])
+    for mode in ['txt_evi', 'img_evi', 'bi_evi']:
+        for n_evi in range(1, 6, 2):
+            col_name = '_'.join([args.dataset, args.model, args.model_size, mode, str(n_evi)])
             if col_name not in dataset.columns:
                 dataset[col_name] = None
 
-    from lmdeploy import pipeline, TurbomindEngineConfig
-    from lmdeploy.vl import load_image
-    if args.model_size == "small":
-        model_id = 'OpenGVLab/InternVL2-4B'
-    elif args.model_size == "medium":
-        model_id = 'OpenGVLab/InternVL2-8B'
-    elif args.model_size == "large":
-        model_id = 'OpenGVLab/InternVL2-8B'
-
-    pipe = pipeline(model_id, backend_config=TurbomindEngineConfig(session_len=8192))
-
-
+    model, processor = get_llava16_model(args.model_size)
     for mode in parse_comma_separated_list(args.mode):
         pmp_template = VERACITY_PROMPTS[mode]
-
         for idx, row in dataset.iterrows():
             claim, image_id, label = row['claim'], row["image_id"], row['label']
-
             if args.debug == "True" and idx > 5:
                 break
 
             total_prompt = pmp_template.format(claim)
-            print(total_prompt)
+            print(total_prompt, f"label: {label}")
 
-            for samp_idx in range(args.repeat):
-                col_name = '_'.join([args.dataset, args.model, args.model_size, mode, str(samp_idx)])
-                if pd.isna(dataset.iloc[idx][col_name]):
-                    response = pipe((total_prompt, load_image(image_id)))
-                    print(response)
-                    dataset.at[idx, col_name] = response
-                    dataset.to_csv(res_file, index=False)
-                    print(f"{col_name} is saved")
-                else:
-                    print(f"{col_name} is filled")
-
+            for n_evi in range(1, 6, 2):
+                response = prompt_llava16(model, processor, load_image_llava(image_id), total_prompt)
+                print(response)
+                col_name = '_'.join([args.dataset, args.model, args.model_size, mode, str(n_evi)])
+                dataset.at[idx, col_name] = response
+                dataset.to_csv(res_file, index=False)
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str, default='mr2')
-    parser.add_argument('--model', type=str, default='intern')
-    parser.add_argument('--mode', type=str, default='direct,cot')
+    parser.add_argument('--model', type=str, default='llava')
+    parser.add_argument('--mode', type=str, default='rag')
     parser.add_argument('--model_size', type=str, default="small")
     parser.add_argument('--debug', type=str, default='False')
     parser.add_argument('--repeat', type=int, default=3)

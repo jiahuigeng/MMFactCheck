@@ -27,7 +27,7 @@ def main(args):
             if col_name not in dataset.columns:
                 dataset[col_name] = None
 
-    # model, processor = get_llava16_model(args.model_size)
+    model, processor = get_llava16_model(args.model_size)
     for mode in parse_comma_separated_list(args.mode):
         pmp_template = VERACITY_PROMPTS[mode]
         for idx, row in dataset.iterrows():
@@ -39,11 +39,15 @@ def main(args):
             print(total_prompt, f"label: {label}")
 
             for samp_idx in range(args.repeat):
-                response = prompt_llava16(model, processor, load_image_llava(image_id), total_prompt)
-                print(response)
-                col_name = '_'.join([args.dataset, args.model, args.model_size, mode, samp_idx])
-                dataset.at[idx, col_name] = response
-                dataset.to_csv(res_file, index=False)
+                col_name = '_'.join([args.dataset, args.model, args.model_size, mode, str(samp_idx)])
+                if pd.isna(dataset.iloc[idx][col_name]):
+                    response = prompt_llava16(model, processor, load_image_llava(image_id), total_prompt)
+                    print(response)
+                    dataset.at[idx, col_name] = response
+                    dataset.to_csv(res_file, index=False)
+                    print(f"{col_name} is saved!")
+                else:
+                    print(f"{col_name} is filled")
 
 if __name__ == '__main__':
 

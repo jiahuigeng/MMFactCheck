@@ -1,30 +1,91 @@
 DIRECT_VERACTY_PREDICTION = """You are a professional fact-checking assistant. You are given an IMAGE together with textual CLAIM: {}. 
-Please predict the truth of the multimodal claim, True, False or NEI(Not Enough Information).
-
-# Your Response:
+Please predict the truth of the multimodal claim, True, False or NEI(Not Enough Information). Use the following format to provide your response:
+ 
 Prediction: [True or False or NEI(Not Enough Information)] 
 """
 
 COT_VERACTY_PREDICTION = """You are a professional fact-checking assistant. You are given an IMAGE together with textual CLAIM: {}. 
-Please predict the truth of the multimodal claim, True, False or NEI(Not Enough Information).
-Prediction: [True or False or NEI(Not Enough Information)] 
+Please predict the truth of the multimodal claim, True, False or NEI(Not Enough Information). Use the following format to provide your response:
 
-# Your Response:
-Let's think step by step.
+Reasoning: [put your step-by-step reasoning here]
+Prediction: [True or False or NEI(Not Enough Information)]
+
+Let's think step by step,
+"""
+
+COT_RUMOR_PREDICTION = """You are a professional fact-checking assistant. You are given an IMAGE together with textual CLAIM: {}.
+Please predict the truth of the multimodal claim, True, False or NEI(Not Enough Information). Use the following format to provide your response:
+
+Reasoning: [put your step-by-step reasoning here]
+Prediction: [True or False or NEI(Not Enough Information)]
+
+Let's think step by step,
+"""
+
+ICL1_VERACITY_PREDICTION = """You are a professional fact-checking assistant. Please predict the truth of the multimodal claim, True, False or NEI(Not Enough Information). 
+Use the following format to provide your response:
+
+Reasoning: [put your step-by-step reasoning here]
+Prediction: [True or False or NEI(Not Enough Information)]
+
+For the first IMAGE, claim: {}
+Reasoning: {}
+Prediction: {}
+
+For the second IMAGE, claim: {}
+# Your Response: 
+"""
+
+ICL2_VERACITY_PREDICTION = """You are a professional fact-checking assistant. Please predict the truth of the multimodal claim, True, False or NEI(Not Enough Information). 
+Use the following format to provide your response:
+
 Reasoning: ["put your step-by-step reasoning here"]
 Prediction: [True or False or NEI(Not Enough Information)]
+
+For the first IMAGE, claim: {}
+Reasoning: {}
+Prediction: {}
+
+For the second IMAGE, claim: {}
+Reasoning: {}
+Prediction: {}
+
+For the third IMAGE, claim: {}
+# Your Response: 
 """
 
-ICL_VERACITY_PREDICTION = """
-"""
 
 VERACITY_PROMPTS = {
     "direct": DIRECT_VERACTY_PREDICTION,
     "cot": COT_VERACTY_PREDICTION,
-    "icl": ICL_VERACITY_PREDICTION
+    "icl1": ICL1_VERACITY_PREDICTION,
+    "icl2": ICL2_VERACITY_PREDICTION,
+}
+
+RUMOR_PROMPTS = {
+    "direct": None,
+    "cot": None,
+    "icl1": None,
+    "icl2":None
 }
 
 MANIPULATION_PROMPTS = {}
+
+# RAG_PROMPTS = {
+#
+# }
+
+RAG_PROMPT = """You are a professional fact-checking assistant. You are given several evidence. 
+# Evidence: 
+{}
+
+Please predict the truth of the multimodal CLAIM {} regarding to the IMAGE, True, False or NEI(Not Enough Information). 
+Use the following format to provide your response:
+
+Reasoning: ["put your step-by-step reasoning here"]
+Prediction: [True or False or NEI(Not Enough Information)]
+# Your Response: 
+"""
 
 DEMONSTRATIONS = {
     "0": {
@@ -51,7 +112,6 @@ DEMONSTRATIONS = {
         "reasoning": "",
         "label": ""
     },
-
 }
 
 
