@@ -36,7 +36,7 @@ def main(args):
     elif args.model_size == "medium":
         model_id = 'OpenGVLab/InternVL2-8B'
     elif args.model_size == "large":
-        model_id = 'OpenGVLab/InternVL2-28B'
+        model_id = 'OpenGVLab/InternVL2-26B'
 
     pipe = pipeline(model_id, backend_config=TurbomindEngineConfig(session_len=8192))
 
