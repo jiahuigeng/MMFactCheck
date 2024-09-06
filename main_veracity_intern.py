@@ -10,7 +10,8 @@ def parse_comma_separated_list(value):
     return [item.strip() for item in values]
 
 def main(args):
-    logger = logging.getLogger()
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
     # dataset = get_dataset(args.dataset)
     if not os.path.exists("results"):
         os.makedirs("results")
