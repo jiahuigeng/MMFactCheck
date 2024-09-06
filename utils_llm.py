@@ -220,7 +220,9 @@ def prompt_llava16(model, processor, image_id, human_input):
     prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
     inputs = processor(images=image, text=prompt, return_tensors="pt").to("cuda:0")
     output = model.generate(**inputs, max_new_tokens=500)
-    output = processor.decode(output[0], skip_special_tokens=True).split("[/INST]")[0]
+    output = processor.decode(output[0], skip_special_tokens=True)
+    if "/INST]" in output:
+        return output.split("/INST]")[1]
     return output
 
 

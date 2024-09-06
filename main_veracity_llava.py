@@ -36,7 +36,7 @@ def main(args):
                 break
 
             total_prompt = pmp_template.format(claim)
-            print(total_prompt, f"label: {label}")
+            # print(total_prompt, f"label: {label}")
 
             for samp_idx in range(args.repeat):
                 col_name = '_'.join([args.dataset, args.model, args.model_size, mode, str(samp_idx)])

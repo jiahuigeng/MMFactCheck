@@ -38,7 +38,7 @@ def main(args):
     elif args.model_size == "medium":
         model_id = 'OpenGVLab/InternVL2-8B'
     elif args.model_size == "large":
-        model_id = 'OpenGVLab/InternVL2-8B'
+        model_id = 'OpenGVLab/InternVL2-28B'
 
     pipe = pipeline(model_id, backend_config=TurbomindEngineConfig(session_len=8192))
 
@@ -53,7 +53,7 @@ def main(args):
                 break
 
             total_prompt = pmp_template.format(claim)
-            print(total_prompt)
+            # print(total_prompt)
 
             for samp_idx in range(args.repeat):
                 col_name = '_'.join([args.dataset, args.model, args.model_size, mode, str(samp_idx)])
