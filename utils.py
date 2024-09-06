@@ -213,7 +213,10 @@ def collect_txt_evidence(dataname, max_results=7, max_retrieval=30):
             continue
         claim, image_id = row["claim"], row["image_id"]
         evidence_ll = []
-        urls = detect_duck_web(claim, max_retrieval)
+        try:
+            urls = detect_duck_web(claim, max_retrieval)
+        except:
+            continue
         cnt_valid_evi = 0
         for url in urls:
             if cnt_valid_evi >= max_results:
