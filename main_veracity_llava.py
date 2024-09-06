@@ -3,13 +3,13 @@ from utils import *
 from utils_llm import *
 from prompts import *
 import argparse
-
+import logging
 def parse_comma_separated_list(value):
     values = value.split(',')
     return [item.strip() for item in values]
 
 def main(args):
-
+    logger = logging.getLogger()
     # dataset = get_dataset(args.dataset)
     if not os.path.exists("results"):
         os.makedirs("results")
@@ -31,6 +31,7 @@ def main(args):
     for mode in parse_comma_separated_list(args.mode):
         pmp_template = VERACITY_PROMPTS[mode]
         for idx, row in dataset.iterrows():
+            logger.info(f"current index {idx}")
             claim, image_id, label = row['claim'], row["image_id"], row['label']
             if args.debug == "True" and idx > 5:
                 break
@@ -42,12 +43,12 @@ def main(args):
                 col_name = '_'.join([args.dataset, args.model, args.model_size, mode, str(samp_idx)])
                 if pd.isna(dataset.iloc[idx][col_name]):
                     response = prompt_llava16(model, processor, image_id, total_prompt)
-                    print(response)
+                    logger.info(response)
                     dataset.at[idx, col_name] = response
                     dataset.to_csv(res_file, index=False)
-                    print(f"{col_name} is saved!")
+                    logger.info(f"{col_name} is saved!")
                 else:
-                    print(f"{col_name} is filled")
+                    logger.info(f"{col_name} is filled")
 
 if __name__ == '__main__':
 

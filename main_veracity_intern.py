@@ -1,7 +1,5 @@
 from shutil import copyfile
-
-import pandas as pd
-
+import logging
 from utils import *
 from utils_llm import *
 from prompts import *
@@ -12,7 +10,7 @@ def parse_comma_separated_list(value):
     return [item.strip() for item in values]
 
 def main(args):
-
+    logger = logging.getLogger()
     # dataset = get_dataset(args.dataset)
     if not os.path.exists("results"):
         os.makedirs("results")
@@ -48,7 +46,7 @@ def main(args):
 
         for idx, row in dataset.iterrows():
             claim, image_id, label = row['claim'], row["image_id"], row['label']
-
+            logger.info(f"current index {idx}")
             if args.debug == "True" and idx > 5:
                 break
 
@@ -59,12 +57,11 @@ def main(args):
                 col_name = '_'.join([args.dataset, args.model, args.model_size, mode, str(samp_idx)])
                 if pd.isna(dataset.iloc[idx][col_name]):
                     response = pipe((total_prompt, load_image(image_id))).text
-                    print(response)
                     dataset.at[idx, col_name] = response
                     dataset.to_csv(res_file, index=False)
-                    print(f"{col_name} is saved")
+                    logger.info(f"{col_name} is saved")
                 else:
-                    print(f"{col_name} is filled")
+                    logger.info(f"{col_name} is filled")
 
 
 if __name__ == '__main__':
