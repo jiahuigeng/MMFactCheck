@@ -90,6 +90,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_size', type=str, default="small")
     parser.add_argument('--debug', type=str, default='False')
     parser.add_argument('--repeat', type=int, default=3)
+    parser.add_argument('--nrepeat', type=int, default=3)
     args = parser.parse_args()
 
     main(args)
