@@ -57,7 +57,7 @@ def main(args):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', type=str, default='mr2')
+    parser.add_argument('--dataset', type=str, default='post4v')
     parser.add_argument('--model', type=str, default='gpt4v')
     parser.add_argument('--mode', type=str, default='cot')
     # parser.add_argument('--model_size', type=str, default="small")
