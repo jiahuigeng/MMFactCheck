@@ -75,7 +75,7 @@ def main(args):
                 total_prompt = pmp_template.format(evi_prompt, claim)
                 print(total_prompt)
 
-                response = prompt_llava16(model, processor, load_image_llava(image_id), total_prompt)
+                response = prompt_llava16(model, processor, image_id, total_prompt)
                 print(response)
                 col_name = '_'.join([args.dataname, args.model, args.model_size, args.mode, todo, str(n_evi)])
                 dataset.at[idx, col_name] = response
