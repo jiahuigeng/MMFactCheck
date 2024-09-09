@@ -47,7 +47,7 @@ def main(args):
     elif args.model_size == "large":
         model_id = 'OpenGVLab/InternVL2-26B'
 
-    # pipe = pipeline(model_id, backend_config=TurbomindEngineConfig(session_len=8192))
+    pipe = pipeline(model_id, backend_config=TurbomindEngineConfig(session_len=8192))
 
     pmp_template = VERACITY_PROMPTS[args.mode]
     for todo in todos:
@@ -87,14 +87,14 @@ def main(args):
                 print(total_prompt)
 
 
-                # col_name = '_'.join([args.dataname, args.model, args.model_size, args.mode, todo, str(n_evi)])
-                # if pd.isna(dataset.iloc[idx][col_name]):
-                #     response = pipe((total_prompt, load_image(image_id))).text
-                #     dataset.at[idx, col_name] = response
-                #     dataset.to_csv(res_file, index=False)
-                #     logger.info(f"{col_name} is saved")
-                # else:
-                #     logger.info(f"{col_name} is filled")
+                col_name = '_'.join([args.dataname, args.model, args.model_size, args.mode, todo, str(n_evi)])
+                if pd.isna(dataset.iloc[idx][col_name]):
+                    response = pipe((total_prompt, load_image(image_id))).text
+                    dataset.at[idx, col_name] = response
+                    dataset.to_csv(res_file, index=False)
+                    logger.info(f"{col_name} is saved")
+                else:
+                    logger.info(f"{col_name} is filled")
 
 
 if __name__ == '__main__':

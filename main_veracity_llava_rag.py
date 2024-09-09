@@ -68,7 +68,6 @@ def main(args):
 
                     evidence = evidence_txt + evidence_img
 
-
                 evi_prompt = ""
                 for item in evidence:
                     evi_prompt += "\nDocument: \n" + item.strip() + "\n"
