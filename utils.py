@@ -1,4 +1,5 @@
 import time
+
 import pandas as pd
 import os
 import json
@@ -191,9 +192,6 @@ def check_valid_url(url):
     valid = is_likely_html(url) and (not is_banned(url)) and (not is_obfuscated_or_encoded(url)) and (not is_fc_organization(url))
     return valid
 
-# def get_startpage():
-
-
 def collect_txt_evidence(dataname, max_results=7, max_retrieval=10):
     '''
     collect evidence for claims in dataset.
@@ -203,7 +201,12 @@ def collect_txt_evidence(dataname, max_results=7, max_retrieval=10):
     idx, image_id, claim, evidence_ll
     '''
     dataset = get_dataset(dataname)
-
+    api_list = [
+        '42f14a065e89d4d63be1cbb5ec98e89f', "d15f07449620376e06322eb6f8ebd674", "f391d705bc7201a43c45e23b96fca992", "ec3597a8c6bf785301d4db0c30c008d6",
+        "33807c2323f6d085c2c1cc8590197160", "f3aee6f5ab247c47068e7156f0e05d97",
+        "f01e70f7f2f8742ab1dfbe865989f92d", "ad8f4a852b57d694fe4b1a7098760933",
+        "551c109156d38904b39cabc89fbbe06c","7a993269d586f670367fa5a52e8f1f86",
+    ]
     evidence_file = os.path.join('dataset', 'retrieval_results', f'{dataname}_txt_evidence.json')
     total_evidence = {}
     if os.path.isfile(evidence_file):
@@ -211,7 +214,7 @@ def collect_txt_evidence(dataname, max_results=7, max_retrieval=10):
 
     for idx, row in dataset.iterrows():
         print(idx)
-        if str(idx) in total_evidence:
+        if str(idx) in total_evidence and len(total_evidence[str(idx)]['evidence_ll']) > 0:
             print(f"{dataname} {idx} is already")
             continue
         # if idx < 560:
@@ -220,7 +223,7 @@ def collect_txt_evidence(dataname, max_results=7, max_retrieval=10):
         evidence_ll = []
         try:
             # urls = detect_duck_web(claim, max_retrieval)
-            urls = get_google_search_results(claim)
+            urls = get_google_search_results(claim, api_key=api_list[idx%10])
         except:
             continue
         # urls = detect_duck_web(claim, max_retrieval)
@@ -250,11 +253,18 @@ def collect_img_evidence(dataname, max_results=7, max_retrieval=30):
         total_evidence = json.load(open(img_evidence_file, encoding='utf-8'))
 
     dataset = get_dataset(dataname)
+
     for idx, row in dataset.iterrows():
         print(idx)
         if str(idx) in total_evidence:
-            print(f"{idx} is already")
-            continue
+            if 'evidence_ll' in total_evidence[str(idx)] and len(total_evidence[str(idx)]['evidence_ll']) > 0:
+                print(f"{idx} is already")
+                continue
+            elif 'evidence' in total_evidence[str(idx)] and len(total_evidence[str(idx)]['evidence']) > 0:
+                total_evidence[str(idx)]['evidence_ll'] = total_evidence[str(idx)]['evidence']
+                json.dump(total_evidence, open(img_evidence_file, 'w', encoding='utf-8'), indent=4, ensure_ascii=False)
+                print(f"{idx} is updated")
+                continue
         claim, image_id = row["claim"], row["image_id"]
         evidence_ll = []
         # urls = detect_duck_web(claim, max_retrieval)
@@ -279,6 +289,7 @@ def collect_img_evidence(dataname, max_results=7, max_retrieval=30):
             'evidence_ll': evidence_ll
         }
         json.dump(total_evidence, open(img_evidence_file, 'w', encoding='utf-8'), indent=4, ensure_ascii=False)
+        print(f"{idx} saved!")
 
 
 
@@ -314,9 +325,9 @@ def get_img_evidence(dataname):
 
 import requests
 
-def get_google_search_results(query, max_retrieval=15):
+def get_google_search_results(query, api_key, max_retrieval=15):
     # Define the endpoint and parameters for the API call
-    api_key = '1b8fe16dee1fbad28bbaa94c7a81bba5'
+    # api_key = '1d9f42d7753add9389b3a22e511e6fa8'
     endpoint = 'http://api.serpstack.com/search'
     params = {
         'access_key': api_key,
@@ -355,20 +366,23 @@ def get_google_search_results(query, max_retrieval=15):
     # for idx, result in enumerate(results):
     #     print(f"{idx + 1}. {result['title']}: {result['url']}")
 
+# def handle_img_keyerror(dataname):
+
 
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('--dataname', type=str)
-    # parser.add_argument('--task', type=str, default='txt')
-    #
-    # args = parser.parse_args()
-    # if args.task == 'txt':
-    #     collect_txt_evidence(args.dataname)
-    # elif args.task == 'img':
-    #     collect_img_evidence(args.dataname)
-    print(get_google_search_results("donald trumpf"))
-    # collect_txt_evidence("fauxtography")
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dataname', type=str, default="post4v")
+    parser.add_argument('--task', type=str, default='txt')
+
+    args = parser.parse_args()
+    if args.task == 'txt':
+        collect_txt_evidence(args.dataname)
+    elif args.task == 'img':
+        collect_img_evidence(args.dataname)
+
+    # print(get_google_search_results("donald trumpf"))
+    # collect_txt_evidence("post4v")
     # collect_img_evidence("mr2")
     # Example usage
       # Replace with your Serpstack API key
