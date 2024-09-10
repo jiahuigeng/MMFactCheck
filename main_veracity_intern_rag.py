@@ -33,7 +33,7 @@ def main(args):
     todos = ['txt', 'img', 'both']
 
     for todo in todos:
-        for n_evi in range(1, 4):
+        for n_evi in range(1, args.n_evi):
             col_name = '_'.join([args.dataname, args.model, args.model_size, args.mode, todo, str(n_evi)])
             if col_name not in dataset.columns:
                 dataset[col_name] = None
@@ -58,7 +58,7 @@ def main(args):
             if args.debug == "True" and idx > 5:
                 break
 
-            for n_evi in range(1, 4):
+            for n_evi in range(1, args.n_evi):
                 if todo.startswith('txt'):
                     evidence = txt_evidence[str(idx)]['evidence_ll'][:n_evi]
                     evidence = [item[2] for item in evidence]
@@ -106,7 +106,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_size', type=str, default="small")
     parser.add_argument('--debug', type=str, default='False')
     parser.add_argument('--repeat', type=int, default=3)
-    parser.add_argument('--nrepeat', type=int, default=3)
+    parser.add_argument('--n_evi', type=int, default=3)
     args = parser.parse_args()
 
     main(args)
