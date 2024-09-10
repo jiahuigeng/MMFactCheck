@@ -23,7 +23,7 @@ def main(args):
     txt_evidence = json.load(open(txt_evidence_file, encoding='utf-8'))
 
     ori_file = os.path.join("dataset", args.dataname, args.dataname+".csv")
-    res_file = os.path.join("results", '_'.join([args.dataname, args.model, args.model_size, args.mode]) + '.csv')
+    res_file = os.path.join("results", '_'.join([args.dataname, args.model, args.model_size]) + '.csv')
 
     if not os.path.exists(res_file):
         copyfile(ori_file, res_file)

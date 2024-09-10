@@ -87,13 +87,13 @@ def dynamic_preprocess(image, min_num=1, max_num=12, image_size=448, use_thumbna
         processed_images.append(thumbnail_img)
     return processed_images
 
-def load_image_intern(image_file, input_size=448, max_num=12):
-    image = Image.open(image_file).convert('RGB')
-    transform = build_transform(input_size=input_size)
-    images = dynamic_preprocess(image, image_size=input_size, use_thumbnail=True, max_num=max_num)
-    pixel_values = [transform(image) for image in images]
-    pixel_values = torch.stack(pixel_values)
-    return pixel_values
+# def load_image_intern(image_file, input_size=448, max_num=12):
+#     image = Image.open(image_file).convert('RGB')
+#     transform = build_transform(input_size=input_size)
+#     images = dynamic_preprocess(image, image_size=input_size, use_thumbnail=True, max_num=max_num)
+#     pixel_values = [transform(image) for image in images]
+#     pixel_values = torch.stack(pixel_values)
+#     return pixel_values
 
 def get_llava16_model(model_size):
     if model_size == "small":
@@ -142,7 +142,18 @@ def prompt_gpt4(model, prompt, image_id):
     res = response.choices[0].message.content
     return res
 
+def concatenate_images(images):
+    width = max(img.width for img in images)
+    total_height = sum(img.height for img in images) + 20 * (len(images) - 1)
 
+    new_img = Image.new('RGB', (width, total_height), (0, 0, 0))
+
+    current_height = 0
+    for img in images:
+        new_img.paste(img, (0, current_height))
+        current_height += img.height + 20  # adding a 20px black bar
+
+    return new_img
 
 def get_model_and_processor(args):
     if args.model == "llava":
