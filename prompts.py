@@ -76,12 +76,7 @@ VERACITY_PROMPTS = {
     "rag": RAG_PROMPT
 }
 
-RUMOR_PROMPTS = {
-    # "direct": None,
-    "cot": None,
-    "icl1": None,
-    "icl2":None
-}
+
 
 MANIPULATION_PROMPTS = {}
 
@@ -137,6 +132,59 @@ DEMONSTRATIONS = {
         "label": "True"
     },
 }
+
+
+COT_AUTHEN_PREDICTION = """You are an advanced AI model trained to assess images for authenticity. Your task is to analyze the given image and determine whether it is real or fake. Provide a clear and concise response with your prediction and an explanation supporting your decision.
+
+Please output your response in the following format:
+
+Prediction: [Real or Fake or NEI(Not Enough Information)]
+Explanation: [Provide a detailed explanation of the factors that led to your conclusion. Consider elements such as image quality, inconsistencies, artifacts, lighting, context, and any other relevant indicators that influenced your decision.]
+"""
+
+ICL1_AUTHEN_PREDICTION = """You are an advanced AI model trained to assess images for authenticity. Your task is to analyze the given image and determine whether it is real or fake. Provide a clear and concise response with your prediction and an explanation supporting your decision.
+
+Please output your response in the following format:
+
+Prediction: [Real or Fake or NEI(Not Enough Information)]
+Explanation: [Provide a detailed explanation of the factors that led to your conclusion. Consider elements such as image quality, inconsistencies, artifacts, lighting, context, and any other relevant indicators that influenced your decision.]
+
+
+For the first image:
+
+Prediction: {}
+Explanation: {}
+
+For the second image:
+"""
+
+ICL2_AUTHEN_PREDICTION = """You are an advanced AI model trained to assess images for authenticity. Your task is to analyze the given image and determine whether it is real or fake. Provide a clear and concise response with your prediction and an explanation supporting your decision.
+
+Please output your response in the following format:
+
+Prediction: [Real or Fake or NEI(Not Enough Information)]
+Explanation: [Provide a detailed explanation of the factors that led to your conclusion. Consider elements such as image quality, inconsistencies, artifacts, lighting, context, and any other relevant indicators that influenced your decision.]
+
+
+For the first image:
+Prediction: {}
+Explanation: {}
+
+For the second image:
+Prediction: {}
+Explanation: {}
+
+For the third image:
+"""
+
+
+
+AUTHEN_PROMPTS = {
+    'cot': COT_AUTHEN_PREDICTION,
+    'icl1': ICL1_AUTHEN_PREDICTION,
+    'icl2': ICL2_AUTHEN_PREDICTION,
+}
+
 
 
 

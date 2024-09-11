@@ -214,9 +214,7 @@ def get_model_and_processor(args):
 #     output = processor.decode(output[0], skip_special_tokens=True).split("[/INST]")[0]
 #     return output
 
-
-
-def prompt_llava16(model, processor, image_id, human_input):
+def prompt_llava16(model, processor, image, human_input):
 
     conversation = [
         {
@@ -227,7 +225,7 @@ def prompt_llava16(model, processor, image_id, human_input):
             ],
         },
     ]
-    image = load_image_llava(image_id)
+    # image = load_image_llava(image_id)
     prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
     inputs = processor(images=image, text=prompt, return_tensors="pt").to("cuda:0")
     output = model.generate(**inputs, max_new_tokens=500)
