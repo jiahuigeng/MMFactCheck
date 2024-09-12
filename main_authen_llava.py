@@ -45,15 +45,16 @@ def main(args):
 
             for samp_idx in range(args.repeat):
                 col_name = '_'.join([args.dataset, args.model, args.model_size, mode, str(samp_idx)])
-                if pd.isna(dataset.iloc[idx][col_name]) and os.path.exists(image_id):
-                    image = load_image_llava(image_id)
-                    response = prompt_llava16(model, processor, image, total_prompt)
-                    logger.info(response)
-                    dataset.at[idx, col_name] = response
-                    dataset.to_csv(res_file, index=False)
-                    logger.info(f"{col_name} is saved!")
-                else:
-                    logger.info(f"{col_name} is filled")
+                if os.path.exists(image_id):
+                    if pd.isna(dataset.iloc[idx][col_name]):
+                        image = load_image_llava(image_id)
+                        response = prompt_llava16(model, processor, image, total_prompt)
+                        logger.info(response)
+                        dataset.at[idx, col_name] = response
+                        dataset.to_csv(res_file, index=False)
+                        logger.info(f"{col_name} is saved!")
+                    else:
+                        logger.info(f"{col_name} is filled")
 
 
 if __name__ == '__main__':
