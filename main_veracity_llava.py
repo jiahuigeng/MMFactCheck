@@ -43,7 +43,8 @@ def main(args):
             for samp_idx in range(args.repeat):
                 col_name = '_'.join([args.dataset, args.model, args.model_size, mode, str(samp_idx)])
                 if pd.isna(dataset.iloc[idx][col_name]):
-                    response = prompt_llava16(model, processor, image_id, total_prompt)
+                    image = load_image_llava(image_id)
+                    response = prompt_llava16(model, processor, image, total_prompt)
                     logger.info(response)
                     dataset.at[idx, col_name] = response
                     dataset.to_csv(res_file, index=False)

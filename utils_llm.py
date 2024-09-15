@@ -162,7 +162,7 @@ def get_model_and_processor(args):
         elif args.model_size == "medium":
             model_id = 'llava-hf/llava-v1.6-vicuna-13b-hf'
         elif args.model_size == "large":
-            model_id = 'llava-hf/llava-1.6-34b-hf'
+            model_id = 'llava-hf/llava-v1.6-34b-hf'
         else:
             return Exception(f"Invalid llava model size: {args.model_size}")
         # cache_dir = "/data/zhuderui/huggingface/hub"
