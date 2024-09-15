@@ -101,7 +101,7 @@ def get_llava16_model(model_size):
     elif model_size == "medium":
         model_id = 'llava-hf/llava-v1.6-vicuna-13b-hf'
     elif model_size == "large":
-        model_id = 'llava-hf/llava-1.6-34b-hf'
+        model_id = 'llava-hf/llava-v1.6-34b-hf'
     else:
         return Exception(f"Invalid model size: {model_size}")
     # cache_dir = "/data/zhuderui/huggingface/hub"
